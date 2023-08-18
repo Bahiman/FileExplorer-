@@ -1,6 +1,5 @@
 #pragma once
 
-#include <QtWidgets/QMainWindow>
 #include "ui_FileExplorer.h"
 
 class FileExplorer : public QMainWindow
@@ -9,7 +8,7 @@ class FileExplorer : public QMainWindow
 
 public:
     FileExplorer(QWidget *parent = nullptr);
-    ~FileExplorer();
+    ~FileExplorer() override;
 
 private:
     Ui::FileExplorerClass ui;

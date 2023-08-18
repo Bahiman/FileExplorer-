@@ -96,6 +96,7 @@
     <QtRcc Include="FileExplorer.qrc" />
     <QtUic Include="FileExplorer.ui" />
     <QtMoc Include="headers\FileExplorer.hpp" />
+    <ClCompile Include="src\Algorithms.cpp" />
     <ClCompile Include="src\File.cpp" />
     <ClCompile Include="src\FileExplorer.cpp" />
     <ClCompile Include="src\FileSystemNode.cpp" />
@@ -103,10 +104,12 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="headers\Algorithms.hpp" />
     <ClInclude Include="headers\File.hpp" />
     <ClInclude Include="headers\FileSystemNode.hpp" />
     <ClInclude Include="headers\Folder.hpp" />
     <ClInclude Include="utilities\CancellableThreadPool.hpp" />
+    <ClInclude Include="utilities\Timer.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
