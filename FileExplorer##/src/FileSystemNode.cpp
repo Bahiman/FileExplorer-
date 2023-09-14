@@ -21,7 +21,7 @@ std::string FileSystemNode::get_last_modification_date(const Path& p_path) const
 	return m_file_info.lastModified().toString().toStdString();
 }
 
-const std::filesystem::path& FileSystemNode::get_path() const
+const Path& FileSystemNode::get_path() const
 {
 	return m_path_;
 }

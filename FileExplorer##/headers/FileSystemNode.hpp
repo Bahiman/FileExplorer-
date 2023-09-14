@@ -22,9 +22,29 @@ public:
 	[[nodiscard]] std::string get_creation_date(const Path& p_path) const;
 	[[nodiscard]] std::string get_last_access_date(const Path& p_path) const;
 	[[nodiscard]] std::string get_last_modification_date(const Path& p_path) const;
-	[[nodiscard]] const std::filesystem::path& get_path() const;
+	[[nodiscard]] const Path& get_path() const;
+
+	template<typename T, typename = std::enable_if<std::is_convertible_v<T, Path>>>
+	void set_path(T&& path)
+	{
+		m_path_ = std::forward<T>(path);
+	}
+	[[nodiscard]] Path& get_modifiable_path()
+	{
+		return m_path_;
+
+	}
 	// a method for getting the size(implementation will be different depending on whether the node is a directory or a file)
-	[[nodiscard]] virtual uint64_t get_size(const std::atomic<bool>& p_continue) const = 0;
+	[[nodiscard]] virtual uint64_t get_size(const std::atomic<bool>& p_continue = false) const = 0;
+	[[nodiscard]] Path&& get_moveable_path()
+	{
+		return std::move(m_path_);
+	}
+
+	FileSystemNode(FileSystemNode&& filesystemnode) noexcept = default;
+	FileSystemNode(const FileSystemNode& filesystemnode) noexcept = default;
+	FileSystemNode& operator=(const FileSystemNode& filesystemnode) noexcept = default;
+	FileSystemNode& operator=(FileSystemNode&& filesystemnode) noexcept = default;
 protected:
 	// the path of the node
 	Path m_path_;
@@ -38,6 +58,9 @@ template <typename T, typename>
 FileSystemNode::FileSystemNode(T&& path)
 {
 	m_path_ = std::forward<T>(path);
+
+	//if (!std::filesystem::exists(m_path_))
+	//	throw std::invalid_argument("The path provided doesn't exist!");
 }
 
 

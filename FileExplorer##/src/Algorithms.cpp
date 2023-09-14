@@ -3,7 +3,7 @@
 inline bool matches(const FileSystemNode& node, std::wstring_view keyword)
 {
 	const auto& file_name = node.get_path().filename();
-	
+
 	size_t pos = file_name.wstring().find(keyword);
 
 	return pos != std::wstring::npos;

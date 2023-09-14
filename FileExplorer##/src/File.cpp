@@ -4,5 +4,5 @@
 
 uint64_t File::get_size(const std::atomic<bool>& p_continue) const
 {
-	return std::filesystem::file_size(m_path_);
+	return std::filesystem::file_size(m_path_);		
 }
