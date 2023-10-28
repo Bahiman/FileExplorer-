@@ -17,7 +17,7 @@ public:
 	explicit FileListModel(QObject* parent = nullptr);
 	int32_t rowCount(const QModelIndex& parent = QModelIndex()) const override;
 	QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
-	void addData(const FileSystemNode& file);
+	void addData(const FileSystemNode& file, bool keep_path);
 	void clear();
 	Qt::ItemFlags flags(const QModelIndex& index) const;
 private:

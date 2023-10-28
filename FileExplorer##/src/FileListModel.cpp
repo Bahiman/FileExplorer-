@@ -1,15 +1,20 @@
 #include "../headers/FileListModel.hpp"
+#include<windows.h>
+#include<fileapi.h>
 #include <QApplication>
 #include <QStyle>
 #include <QStyleFactory>
 #include <iostream>
+
+
 FileListModel::FileListModel(const FileSystemNode& file, QObject* parent)
 {
 	setParent(parent);
 	FileItem file_item;
-	file_item.name = QString::fromStdString(file.get_path().string().substr(file.get_path().string().find_last_of('/') + 1));
+	file_item.name = QString::fromStdWString(file.get_path().substr(file.get_path().find_last_of('/') + 1));
 	// this will be finished later
-	file_item.icon = QApplication::style()->standardIcon(QStyle::SP_FileIcon);
+
+	file_item.icon = QApplication::style()->standardIcon(QStyle::SP_ArrowRight);
 	files_.push_back(file_item);
 }
 
@@ -23,13 +28,6 @@ int FileListModel::rowCount(const QModelIndex& parent) const
 	return files_.size();
 }
 
-//void FileListModel::addFile(const FileSystemNode* file)
-//{
-//	FileItem file_item;
-//	file_item.name = QString::fromStdString(file.getPath().string().substr(file.getPath().string().find_last_of('/') + 1));
-//	file_item.icon = QApplication::style().standardIcon(QStyle::SP_FileIcon);
-//	files_.push_back(file_item);
-//}
 
 QVariant FileListModel::data(const QModelIndex& index, int role) const
 {
@@ -44,17 +42,17 @@ QVariant FileListModel::data(const QModelIndex& index, int role) const
 	return QVariant();
 }
 
-void FileListModel::addData(const FileSystemNode& file)
+void FileListModel::addData(const FileSystemNode& file, bool keep_path = false)
 {
-	//FileItem file_item;
-	//file_item.name = QString::fromStdString(file.getPath().string().substr(file.getPath().string().find_last_of('/') + 1));
-	//file_item.icon = QApplication::style()->standardIcon(QStyle::SP_FileIcon);
-	//files_.push_back(file_item);
-	//std::cout << file_item.name.toStdString() << std::endl;
 	beginInsertRows(QModelIndex(), files_.size(), files_.size());
 	FileItem file_item;
-	file_item.name = QString::fromStdWString(file.get_path().wstring().substr(file.get_path().string().find_last_of('/') + 1));
-	file_item.icon = QApplication::style()->standardIcon(QStyle::SP_FileDialogNewFolder);
+	auto file_is_folder = [&file]() -> bool
+	{
+		return dynamic_cast<const Folder*>(&file);
+	};
+	file_item.name =  !keep_path ? QString::fromStdWString(file.get_file_name().data()) : QString::fromStdWString(file.get_path());
+	//std::wcout << file.get_file_name().size() << " ???" << std::endl;
+	file_item.icon = file_is_folder() ? QApplication::style()->standardIcon(QStyle::SP_DirIcon) : QApplication::style()->standardIcon(QStyle::SP_FileIcon);
 	files_.push_back(file_item);
 	endInsertRows();
 }

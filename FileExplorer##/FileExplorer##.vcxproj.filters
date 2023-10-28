@@ -81,5 +81,8 @@
     <ClInclude Include="headers\CustomLIstView.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="utilities\Other.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

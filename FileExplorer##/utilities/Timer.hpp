@@ -21,6 +21,7 @@ public:
 		double ms = duration * 0.001;
 
 		std::cout << duration << "us (" << ms << "ms)\n";
+
 	}
 
 	Timer()

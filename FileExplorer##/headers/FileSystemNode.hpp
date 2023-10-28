@@ -5,7 +5,7 @@
 #include <vector>
 
 // A type alias for the Path
-using Path = std::filesystem::path;
+using Path = std::wstring;
 
 // A type alias for the directory iterator 
 using FSDirIt = std::filesystem::directory_iterator;
@@ -23,7 +23,7 @@ public:
 	[[nodiscard]] std::string get_last_access_date(const Path& p_path) const;
 	[[nodiscard]] std::string get_last_modification_date(const Path& p_path) const;
 	[[nodiscard]] const Path& get_path() const;
-
+	[[nodiscard]] std::wstring_view get_file_name() const;
 	template<typename T, typename = std::enable_if<std::is_convertible_v<T, Path>>>
 	void set_path(T&& path)
 	{
@@ -58,9 +58,6 @@ template <typename T, typename>
 FileSystemNode::FileSystemNode(T&& path)
 {
 	m_path_ = std::forward<T>(path);
-
-	//if (!std::filesystem::exists(m_path_))
-	//	throw std::invalid_argument("The path provided doesn't exist!");
 }
 
 

@@ -19,7 +19,10 @@ public:
 	{
 		this->m_path_ = std::move(folder.m_path_);
 	}
-	Folder(const Folder& folder) noexcept = default;
+	Folder(const Folder& folder, bool d) noexcept
+	{
+		this->m_path_ = folder.m_path_;
+	}
 	Folder& operator=(const Folder& folder) noexcept = default;
 	Folder& operator=(Folder&& folder) noexcept = default;
 	template<typename T, typename = std::enable_if<std::is_convertible_v<T, Path>>>
