@@ -20,27 +20,44 @@ uint64_t Folder::get_size(const std::atomic<bool>& p_continue) const
 	return result;
 }
 
+inline std::wstring formatPath(std::wstring_view file_name, std::wstring directory)
+{
+	if (directory.back() != '\\') // \ 
+		directory.append(1, '\\');
+
+	directory.append(file_name);
+
+	return directory;
+}
+
+inline void fix_path(std::unique_ptr<FileSystemNode>& elem)
+{
+	auto& acquired_path = elem->get_modifiable_path();
+	std::erase(acquired_path, L'*');
+}
+
+void visit_vector(std::variant<std::execution::sequenced_policy, std::execution::parallel_policy>& variant, FSNodes& vector)
+{
+	std::visit([&](auto policy) {
+		std::for_each(policy, vector.begin(), vector.end(), fix_path);
+	}, variant);
+}
+
+void move_into_vector(FSNodes& target, FSNodes& input)
+{
+	target.insert(target.end(), std::make_move_iterator(input.begin()), std::make_move_iterator(input.end()));
+}
+
 std::optional<FSNodes> Folder::get_contents_recursively(const std::atomic<bool>& stop_token /*= false*/) const
 {
 	FSNodes nodes;
-
 	FSNodes local_folders;
-
 	FSNodes local_files;
 
-	auto formatPath = [](std::wstring_view file_name, std::wstring directory) -> std::wstring
-		{
-			if (directory.back() != '\\') // \ 
-				directory.append(1, '\\');
-			directory.append(file_name);
-
-			return directory;
-		};
-
 	WIN32_FIND_DATA findFileData;
-
+															
 	std::queue<std::wstring> tasks_pool;
-
+		
 	tasks_pool.push(m_path_);
 
 	while (!tasks_pool.empty() and !stop_token)
@@ -58,7 +75,6 @@ std::optional<FSNodes> Folder::get_contents_recursively(const std::atomic<bool>&
 					if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 					{
 						tasks_pool.emplace(formattedPath);
-
 						local_folders.emplace_back(std::make_unique<Folder>(std::move(formattedPath)));
 						continue;
 					}
@@ -70,19 +86,7 @@ std::optional<FSNodes> Folder::get_contents_recursively(const std::atomic<bool>&
 		tasks_pool.pop();
 	}
 
-	auto fix_path = [&](auto& elem) { // just to erase the leftover *
-		auto& acquired_path = elem->get_modifiable_path();
-		std::erase(acquired_path, L'*');
-	};
-
-	auto visit_vector = [&](auto& variant, auto& vector)
-	{
-		std::visit([&](auto policy) {
-			std::for_each(policy, vector.begin(), vector.end(), fix_path);
-		}, variant);
-	};
-
-	bool high_elem_count = (local_folders.size() + local_files.size()) > 100'000;
+	bool high_elem_count = (local_folders. size() + local_files.size()) > 100'000;
 
 	std::variant<std::execution::sequenced_policy, std::execution::parallel_policy> exec_policy;
 
@@ -96,12 +100,12 @@ std::optional<FSNodes> Folder::get_contents_recursively(const std::atomic<bool>&
 	visit_vector(exec_policy, local_files);
 
 	nodes.reserve(local_files.size() + local_folders.size());
-	nodes.insert(nodes.end(), std::make_move_iterator(local_folders.begin()), std::make_move_iterator(local_folders.end()));
-	nodes.insert(nodes.end(), std::make_move_iterator(local_files.begin()), std::make_move_iterator(local_files.end()));
+
+	move_into_vector(nodes, local_folders);
+	move_into_vector(nodes, local_files);
 
 	if (nodes.empty())
 		return std::nullopt;
-
 	return nodes;
 }
 
@@ -114,15 +118,6 @@ std::optional<FSNodes> Folder::get_contents(const std::atomic<bool>& stop_token 
 	FSNodes local_folders;
 
 	FSNodes local_files;
-
-	auto formatPath = [](std::wstring_view file_name, std::wstring directory) -> std::wstring
-	{
-		if (directory.back() != '\\') // \ 
-			directory.append(1, '\\');
-		directory.append(file_name);
-
-		return directory;
-	};
 
 	WIN32_FIND_DATA findFileData;
 
@@ -145,18 +140,6 @@ std::optional<FSNodes> Folder::get_contents(const std::atomic<bool>& stop_token 
 	}
 	FindClose(hFind);
 
-	auto fix_path = [&](auto& elem) { // just to erase the leftover `*`
-		auto& acquired_path = elem->get_modifiable_path();
-		std::erase(acquired_path, L'*');
-	};
-
-	auto visit_vector = [&](auto& variant, auto& vector) // just use the appropriate execution policy
-	{
-		std::visit([&](auto& policy) {
-			std::for_each(policy, vector.begin(), vector.end(), fix_path);
-		}, variant);
-	};
-
 	bool high_elem_count = (local_folders.size() + local_files.size()) > 100'000;
 
 	std::variant<std::execution::sequenced_policy, std::execution::parallel_policy> exec_policy;
@@ -170,8 +153,9 @@ std::optional<FSNodes> Folder::get_contents(const std::atomic<bool>& stop_token 
 	visit_vector(exec_policy, local_files);
 
 	nodes.reserve(local_files.size() + local_folders.size());
-	nodes.insert(nodes.end(), std::make_move_iterator(local_folders.begin()), std::make_move_iterator(local_folders.end()));
-	nodes.insert(nodes.end(), std::make_move_iterator(local_files.begin()), std::make_move_iterator(local_files.end()));
+	
+	move_into_vector(nodes, local_folders);
+	move_into_vector(nodes, local_files);
 
 	if (nodes.empty())
 		return std::nullopt;

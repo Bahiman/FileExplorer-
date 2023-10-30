@@ -1,4 +1,4 @@
-C:\Program Files\PowerToys\modules\FileExplorerPreview
+
 C:\Program Files\Malwarebytes\Anti-Malware\QtQuick\PrivateWidgets
 C:\Program Files\Microsoft Visual Studio\2022\Community\ImportProjects
 C:\Program Files\NVIDIA Corporation\FrameViewSDK\SDK\Private_Debug

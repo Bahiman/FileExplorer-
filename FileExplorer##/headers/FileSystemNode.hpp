@@ -54,6 +54,7 @@ protected:
 
 using FSNodes = std::vector<std::unique_ptr<FileSystemNode>>;
 
+
 template <typename T, typename>
 FileSystemNode::FileSystemNode(T&& path)
 {
