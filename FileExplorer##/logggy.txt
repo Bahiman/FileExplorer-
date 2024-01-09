@@ -3523,3 +3523,5 @@ C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\M
 C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\VC\SecurityIssueAnalysis\python\lib\site-packages\pythonwin\pywin\tools\__pycache__\browseProjects.cpython-311.pyc
 C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\VC\SecurityIssueAnalysis\python\lib\site-packages\win32\scripts\VersionStamp\__pycache__\BrandProject.cpython-311.pyc
 C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\VC\SecurityIssueAnalysis\python\lib\site-packages\win32comext\shell\demos\__pycache__\IFileOperationProgressSink.cpython-311.pyc
+C:\Program Files\Microsoft Visual Studio\2022\Community\Common7
+

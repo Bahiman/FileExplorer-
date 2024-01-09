@@ -67,4 +67,5 @@ private:
     void updateContents(const Folder& folder); // update the contents to a given folder
     void updateUiToConents(bool keep_path = false); // update the ui to contents
     void openDialogueBox(DLG_BX level, std::wstring_view message); // opening a dialogue box
+    
 };

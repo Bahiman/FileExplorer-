@@ -1,8 +1,8 @@
 ﻿#include"../headers/FileExplorer.hpp"
 #include"../headers/Algorithms.hpp"
+#include "../utilities/Timer.hpp"
 #include<qevent.h>
 #include<iostream>
-#include "../utilities/Timer.hpp"
 
 
 // a function that checks 
@@ -42,7 +42,7 @@ bool FileExplorer::eventFilter(QObject* watched, QEvent* event)
 				Folder folder(ui.file_browser->text().toStdWString());
 				updateContents(folder);
 				updateUiToConents();
-				search_stop_token = false;
+				search_stop_token = true;
 				search_valid = false;
 				file_browser_text_changed = false;
 			}
@@ -56,13 +56,12 @@ bool FileExplorer::eventFilter(QObject* watched, QEvent* event)
 			if (search_line_text_changed) {
 				updateUiToConents();
 				search_valid = false;
+				search_stop_token = true;
 				startSearch();
 				search_line_text_changed = false;
 			}
 		} 
 	}
-
-
 	return false;
 }
 
@@ -142,7 +141,25 @@ void FileExplorer::elemClicked()
 
 void FileExplorer::backButtonClicked()
 {
+	search_valid = false;
+	search_stop_token = true;
+	
+	auto get_path_before = [&]() -> std::wstring
+	{
+		std::wstring current_path = ui.file_browser->text().toStdWString();
 
+		size_t last_slash = current_path.rfind(L'\\');
+
+		//if (last_slash != std::wstring::npos)  sdfsdf``            
+
+		// moneytype and also set the fuck down t series I am here to spill teh re	
+
+		return std::wstring(current_path.begin(), current_path.begin() + last_slash);
+	};
+
+	this->ui.file_browser->setText(QString::fromStdWString(get_path_before()));
+	updateContents(Folder(ui.file_browser->text().toStdWString()));
+	updateUiToConents();
 }
 
 void FileExplorer::updateContents(const Folder& folder)

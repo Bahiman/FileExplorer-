@@ -43,6 +43,7 @@ void visit_vector(std::variant<std::execution::sequenced_policy, std::execution:
 	}, variant);
 }
 
+
 void move_into_vector(FSNodes& target, FSNodes& input)
 {
 	target.insert(target.end(), std::make_move_iterator(input.begin()), std::make_move_iterator(input.end()));
